@@ -13,9 +13,6 @@ public class Main {
 	public static void main(String[] args) {
 		System.out.println("---프로그램 시작---");
 		Scanner sc = new Scanner(System.in);
-		List<Article> articles = new ArrayList<>();
-
-		int lastArticleId = 0;
 
 		while (true) {
 			System.out.print("입력하실 명령어 )) ");
@@ -31,17 +28,10 @@ public class Main {
 			}
 			if (command.equals("article write")) {
 				System.out.println("---게시글 생성---");
-				int id = lastArticleId + 1;
-				lastArticleId = id;
 				System.out.print("제목 : ");
 				String title = sc.nextLine();
 				System.out.print("내용 : ");
 				String body = sc.nextLine();
-
-//				System.out.printf("제목 : %s, 내용 : %s\n", title, body);
-
-				Article article = new Article(id, title, body);
-				articles.add(article);
 
 				Connection conn = null;
 				PreparedStatement pstat = null;
@@ -59,9 +49,8 @@ public class Main {
 					sql += ", title = \'" + title + "\'";
 					sql += ", `body` = \'" + body + "\';";
 
-//					System.out.println(sql);
-
 					pstat = conn.prepareStatement(sql);
+					int affectedRows = pstat.executeUpdate();
 
 				} catch (ClassNotFoundException e) {
 					System.out.println("드라이버 로딩 실패");
@@ -83,16 +72,11 @@ public class Main {
 						e.printStackTrace();
 					}
 				}
-
-				System.out.printf("%d번 글이 생성되었습니다.\n", id);
+				System.out.println("게시물이 생성되었습니다.");
 
 			} else if (command.equals("article list")) {
 				System.out.println("---게시글 리스트---");
-
-				if (articles.size() == 0) {
-					System.out.println("게시물이 존재하지 않습니다.");
-					continue;
-				}
+				List<Article> articles = new ArrayList<>();
 
 				Connection conn = null;
 				PreparedStatement pstat = null;
@@ -105,20 +89,20 @@ public class Main {
 					conn = DriverManager.getConnection(url, "root", "");
 					System.out.println("연결 성공!");
 
-					String sql = "SELECT * FROM article;";
+					String sql = "SELECT * FROM article ORDER BY id DESC;";
 
 					pstat = conn.prepareStatement(sql);
 					rs = pstat.executeQuery();
 
 					while (rs.next()) {
-						int id = rs.getInt(1);
-						String regDate = rs.getString(2);
-						String updateDate = rs.getString(3);
-						String title = rs.getString(4);
-						String body = rs.getString(5);
+						int id = rs.getInt("id");
+						String regDate = rs.getString("regDate");
+						String updateDate = rs.getString("updateDate");
+						String title = rs.getString("title");
+						String body = rs.getString("body");
 
-						System.out.println("id: " + id + " || regDate : " + regDate + " || updateDate : " + updateDate
-								+ " || title : " + title + " || body : " + body);
+						Article article = new Article(id, regDate, updateDate, title, body);
+						articles.add(article);
 					}
 
 				} catch (ClassNotFoundException e) {
@@ -134,37 +118,35 @@ public class Main {
 						e.printStackTrace();
 					}
 					try {
-						if (conn != null && !conn.isClosed()) {
-							conn.close();
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-					try {
 						if (pstat != null && !pstat.isClosed()) {
 							pstat.close();
 						}
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
+					try {
+						if (conn != null && !conn.isClosed()) {
+							conn.close();
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 
-			}
-//			else if (command.equals("article detail")) {
-//				System.out.println("article detail");
-//				
-//				
-//			} else if (command.equals("article modify")) {
-//				System.out.println("article modify");
-//				
-//				
-//			} else if (command.equals("article delete")) {
-//				System.out.println("article delete");
-//				
-//				
-//			}
+				if (articles.size() == 0) {
+					System.out.println("게시물이 존재하지 않습니다.");
+					continue;
+				}
 
-			else {
+				System.out.println("번호  /  제목");
+
+				for (Article article : articles) {
+					System.out.printf("%d    /   %s\n", article.id, article.title);
+				}
+
+			} else if (command.startsWith("article modify ")) {
+
+			} else {
 				System.out.println("잘못된 명령어입니다.");
 			}
 		}

@@ -5,12 +5,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.sbs.example.textBoard.Article;
 
 public class JDBCSelectTest {
 	public static void main(String[] args) {
 		Connection conn = null;
 		PreparedStatement pstat = null;
 		ResultSet rs = null;
+		List<Article> articles = new ArrayList<>();
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -19,20 +24,21 @@ public class JDBCSelectTest {
 			conn = DriverManager.getConnection(url, "root", "");
 			System.out.println("연결 성공!");
 
-			String sql = "SELECT * FROM article;";
+			String sql = "SELECT * FROM article ORDER BY id DESC;";
 
 			pstat = conn.prepareStatement(sql);
 			rs = pstat.executeQuery();
-
+			
+			
 			while (rs.next()) {
 				int id = rs.getInt(1);
 				String regDate = rs.getString(2);
 				String updateDate = rs.getString(3);
 				String title = rs.getString(4);
 				String body = rs.getString(5);
-
-				System.out.println("id: " + id + " || regDate : " + regDate + " || updateDate : " + updateDate
-						+ " || title : " + title + " || body : " + body);
+				
+				Article article = new Article(id, regDate, updateDate, title, body);
+				articles.add(article);
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -62,5 +68,6 @@ public class JDBCSelectTest {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("결과 : " + articles);
 	}
 }
