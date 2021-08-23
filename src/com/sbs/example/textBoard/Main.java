@@ -213,7 +213,7 @@ public class Main {
 
 					pstat = conn.prepareStatement(sql);
 					rs = pstat.executeQuery();
-					
+
 					while (rs.next()) {
 						String regDate = rs.getString("regDate");
 						String updateDate = rs.getString("updateDate");
@@ -260,6 +260,47 @@ public class Main {
 				System.out.printf("수정일 : %s\n", foundArticle.updateDate);
 				System.out.printf("제목 : %s\n", foundArticle.title);
 				System.out.printf("내용 : %s\n", foundArticle.body);
+
+			} else if (command.startsWith("article delete ")) {
+				int id = Integer.parseInt(command.split(" ")[2]);
+				System.out.printf("---%d번 게시글 삭제---\n", id);
+
+				Connection conn = null;
+				PreparedStatement pstat = null;
+
+				try {
+					Class.forName("com.mysql.jdbc.Driver");
+					String url = "jdbc:mysql://127.0.0.1:3306/text_board?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeNehavior=convertToNull";
+
+					conn = DriverManager.getConnection(url, "root", "");
+					System.out.println("연결 성공!");
+
+					String sql = "DELETE FROM article WHERE id = " + id + ";";
+
+					pstat = conn.prepareStatement(sql);
+					int affectedRows = pstat.executeUpdate();
+
+				} catch (ClassNotFoundException e) {
+					System.out.println("드라이버 로딩 실패");
+				} catch (SQLException e) {
+					System.out.println("에러: " + e);
+				} finally {
+					try {
+						if (pstat != null && !pstat.isClosed()) {
+							pstat.close();
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					try {
+						if (conn != null && !conn.isClosed()) {
+							conn.close();
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+				System.out.printf("%d번 게시물이 삭제되었습니다.\n", id);
 
 			} else {
 				System.out.println("잘못된 명령어입니다.");
