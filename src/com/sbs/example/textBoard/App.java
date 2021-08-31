@@ -69,7 +69,98 @@ public class App {
 
 	private int doAction(Connection conn, Scanner sc, String command) {
 
-		if (command.equals("article write")) {
+		if (command.equals("member join")) {
+
+			System.out.println("--- 회원가입 ---");
+			String loginId;
+			String loginPw;
+			String loginPwConfirm;
+			String name;
+
+			// 로그인 아이디 입력
+			while (true) {
+				System.out.printf("아이디 : ");
+				loginId = sc.nextLine().trim();
+
+				if (loginId.length() == 0) {
+					System.out.println("생성할 아이디를 입력해주세요.");
+					continue;
+				}
+
+				SecSql sql = new SecSql();
+				sql.append("SELECT COUNT(*) > 0"); 
+				sql.append("FROM `member`");
+				sql.append("WHERE loginId = ?", loginId);
+				// loginId와 동일한 아이디가 있다면, 'SELECT COUNT(*) > 0' 식이 참이므로 1, 없다면 0
+
+				boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
+
+				if (isLoginIdDup) {
+					System.out.printf("%s(은)는 이미 사용중인 로그인 아이디입니다.\n", loginId);
+					continue;
+				}
+				break;
+
+			}
+			// 로그인 비밀번호 입력
+			while (true) {
+				System.out.printf("로그인 비밀번호 : ");
+				loginPw = sc.nextLine().trim();
+
+				if (loginPw.length() == 0) {
+					System.out.println("로그인 비밀번호를 입력해주세요.");
+				}
+				// 로그인 비밀번호 확인 입력
+				boolean loginPwConfirmIsSame = true;
+
+				while (true) {
+					System.out.printf("로그인 비밀번호 확인 : ");
+					loginPwConfirm = sc.nextLine().trim();
+
+					if (loginPwConfirm.length() == 0) {
+						System.out.println("로그인 비밀번호 확인을 입력해주세요.");
+						continue;
+					}
+					if (loginPw.equals(loginPwConfirm) == false) {
+						System.out.println("로그인 비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
+						loginPwConfirmIsSame = false;
+						break;
+					}
+
+					break;
+				}
+				// 로그인 비밀번호와 로그인 비밀번호 확인이 일치한다면 입력 완료.
+				if (loginPwConfirmIsSame) {
+					break;
+				}
+			}
+			// 이름 입력
+			while (true) {
+				System.out.printf("이름 : ");
+				name = sc.nextLine().trim();
+
+				if (name.length() == 0) {
+					System.out.println("이름을 입력해주세요.");
+					continue;
+				}
+				break;
+
+			}
+
+			SecSql sql = new SecSql();
+
+			sql.append("INSERT INTO `member`");
+			sql.append("SET regDate = NOW()");
+			sql.append(", updateDate = NOW()");
+			sql.append(", loginId = ?", loginId);
+			sql.append(", loginPw = ?", loginPw);
+			sql.append(", `name` = ?", name);
+
+			int id = DBUtil.insert(conn, sql);
+
+			System.out.printf("%s님 환영합니다.\n", name);
+
+		} else if (command.equals("article write")) {
 			System.out.println("---게시글 생성---");
 			System.out.print("제목 : ");
 			String title = sc.nextLine();
@@ -91,7 +182,7 @@ public class App {
 		} else if (command.startsWith("article modify ")) {
 			int id = Integer.parseInt(command.split(" ")[2]);
 			System.out.printf("---%d번 게시글 수정---\n", id);
-			
+
 			SecSql sql = new SecSql(); // 입력된 id로 삭제할 데이터가 존재하는지 여부 조회 => 0 또는 1개의 데이터 조회
 			sql.append("SELECT COUNT(*) AS cnt");
 			sql.append("FROM article");
@@ -102,7 +193,7 @@ public class App {
 				System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
 				return 0;
 			}
-			
+
 			System.out.print("새 제목 : ");
 			String title = sc.nextLine();
 			System.out.print("새 내용 : ");
@@ -163,7 +254,7 @@ public class App {
 
 			Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
 			foundArticle = new Article(articleMap);
-			
+
 			if (articleMap.isEmpty()) {
 				System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
 				return 0;
