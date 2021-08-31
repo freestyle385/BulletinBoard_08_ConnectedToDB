@@ -37,8 +37,8 @@ public class JDBCSelectTest {
 				String title = rs.getString(4);
 				String body = rs.getString(5);
 				
-				Article article = new Article(id, regDate, updateDate, title, body);
-				articles.add(article);
+//				Article article = new Article(id, regDate, updateDate, title, body);
+//				articles.add(article);
 			}
 
 		} catch (ClassNotFoundException e) {

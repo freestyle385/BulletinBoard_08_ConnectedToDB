@@ -163,11 +163,11 @@ public class App {
 
 			Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
 			foundArticle = new Article(articleMap);
-
-//			if (foundArticle == null) {
-//				System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
-//				return 0;
-//			}
+			
+			if (articleMap.isEmpty()) {
+				System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
+				return 0;
+			}
 
 			System.out.printf("번호 : %d\n", foundArticle.id);
 			System.out.printf("생성일 : %s\n", foundArticle.regDate);
