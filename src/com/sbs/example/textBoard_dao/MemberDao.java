@@ -24,7 +24,7 @@ public class MemberDao {
 		return DBUtil.selectRowBooleanValue(conn, sql);
 	}
 
-	public int doJoin(String loginId, String loginPw, String name) {
+	public void doJoin(String loginId, String loginPw, String name) {
 		SecSql sql = new SecSql();
 
 		sql.append("INSERT INTO `member`");
@@ -34,9 +34,7 @@ public class MemberDao {
 		sql.append(", loginPw = ?", loginPw);
 		sql.append(", `name` = ?", name);
 		
-		int id = DBUtil.insert(conn, sql);
-		
-		return id;
+		DBUtil.insert(conn, sql);
 	}
 
 }

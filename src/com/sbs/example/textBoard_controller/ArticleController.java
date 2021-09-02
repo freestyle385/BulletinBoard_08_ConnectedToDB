@@ -25,7 +25,7 @@ public class ArticleController extends Controller {
 		System.out.print("내용 : ");
 		String body = sc.nextLine();
 
-		int id = articleService.dowrite(title, body);
+		int id = articleService.write(title, body);
 
 		System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
 	}
@@ -46,22 +46,14 @@ public class ArticleController extends Controller {
 		System.out.print("새 내용 : ");
 		String body = sc.nextLine();
 
-		id = articleService.doModify(title, body, id);
+		articleService.update(title, body, id);
 
 		System.out.printf("%d번 게시글 수정이 완료되었습니다.\n", id);
 	}
 
 	public void showList(String command) {
 		System.out.println("---게시글 리스트---");
-		List<Article> articles = new ArrayList<>();
-
-		List<Map<String, Object>> articlesListMap = articleService.showList();
-		// DB에서 조회해 불러온 데이터의 구조를 자바에서는 배열로 바로 인식할 수 없음 => 우선 맵핑(key,value) 리스트로 불러오기
-
-		for (Map<String, Object> articleMap : articlesListMap) {
-			articles.add(new Article(articleMap));
-		}
-		// 맵핑 리스트의 데이터 articleMap을 for문을 통해 articles 배열에 하나씩 넣어줌
+		List<Article> articles = articleService.getArticles();
 
 		if (articles.size() == 0) {
 			System.out.println("게시물이 존재하지 않습니다.");
@@ -79,16 +71,12 @@ public class ArticleController extends Controller {
 		int id = Integer.parseInt(command.split(" ")[2]);
 		System.out.printf("---%d번 게시글 상세정보---\n", id);
 
-		Article foundArticle = null;
+		Article foundArticle = articleService.getArticleById(id);
 
-		Map<String, Object> articleMap = articleService.showDetail(id);
-		
-		if (articleMap.isEmpty()) {
+		if (foundArticle == null) {
 			System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
 			return;
 		}
-		
-		foundArticle = new Article(articleMap);
 
 		System.out.printf("번호 : %d\n", foundArticle.id);
 		System.out.printf("생성일 : %s\n", foundArticle.regDate);
@@ -108,7 +96,7 @@ public class ArticleController extends Controller {
 			return;
 		}
 
-		articleService.doDelete(id);
+		articleService.delete(id);
 
 		System.out.printf("%d번 게시물이 삭제되었습니다.\n", id);
 	}
