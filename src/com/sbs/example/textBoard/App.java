@@ -72,6 +72,9 @@ public class App {
 		if (command.equals("member join")) {
 			memberController.doJoin(command);
 
+		} else if (command.equals("member login")) {
+			memberController.doLogin(command);
+
 		} else if (command.equals("article write")) {
 			articleController.doWrite(command);
 			
