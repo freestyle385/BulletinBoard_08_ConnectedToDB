@@ -1,18 +1,15 @@
 package com.sbs.example.textBoard_controller;
 
-import java.sql.Connection;
-import java.util.Scanner;
-
-import com.sbs.example.textBoard.Member;
+import com.sbs.example.textBoard.Container;
+import com.sbs.example.textBoard_dto.Member;
 import com.sbs.example.textBoard_service.MemberService;
 
 public class MemberController extends Controller {
 
 	private MemberService memberService;
 
-	public MemberController(Connection conn, Scanner sc) {
-		super(sc);
-		memberService = new MemberService(conn);
+	public MemberController() {
+		memberService = Container.memberService;
 	}
 
 	public void doJoin(String command) {
@@ -142,10 +139,11 @@ public class MemberController extends Controller {
 			
 			System.out.printf("%s님 환영합니다.\n", member.name);
 			
-			int loginedMemberId = member.id;
+			Container.session.loginedMemberId = member.id;
+			Container.session.loginedMember = member;
 			break;
 		}
 
 	}
-
 }
+	

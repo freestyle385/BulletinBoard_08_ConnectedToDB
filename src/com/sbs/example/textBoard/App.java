@@ -11,11 +11,13 @@ import com.sbs.example.textBoard_controller.MemberController;
 public class App {
 	public void run() {
 		System.out.println("---프로그램 시작---");
-		Scanner sc = new Scanner(System.in);
+		Container.sc = new Scanner(System.in);
+		
+		Container.init();
 
 		while (true) {
 			System.out.print("입력하실 명령어 )) ");
-			String command = sc.nextLine().trim();
+			String command = Container.sc.nextLine().trim();
 
 			if (command.length() == 0) {
 				System.out.println("다시 입력해주세요.");
@@ -35,8 +37,9 @@ public class App {
 			String url = "jdbc:mysql://127.0.0.1:3306/text_board?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeNehavior=convertToNull";
 			try {
 				conn = DriverManager.getConnection(url, "root", "");
-
-				int actionResult = action(conn, sc, command);
+				Container.conn = conn;
+				
+				int actionResult = action(command);
 
 				if (actionResult == -1) {
 					break;
@@ -58,16 +61,15 @@ public class App {
 		}
 		// DB 연결 끝
 
-		sc.close();
+		Container.sc.close();
 
 	}
 
-	private int action(Connection conn, Scanner sc, String command) {
+	private int action(String command) {
 
-		MemberController memberController = new MemberController(conn, sc);
+		MemberController memberController = Container.memberController;
 		
-		ArticleController articleController = new ArticleController(conn, sc);
-		
+		ArticleController articleController = Container.articleController;
 		
 		if (command.equals("member join")) {
 			memberController.doJoin(command);

@@ -1,22 +1,17 @@
 package com.sbs.example.textBoard_dao;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.sbs.example.textBoard.Article;
+import com.sbs.example.textBoard.Container;
 import com.sbs.example.textBoard.util.DBUtil;
 import com.sbs.example.textBoard.util.SecSql;
+import com.sbs.example.textBoard_dto.Article;
 
 public class ArticleDao {
 
-	private Connection conn;
-
-	public ArticleDao(Connection conn) {
-		this.conn = conn;
-	}
-
+		
 	public int write(String title, String body) {
 
 		SecSql sql = new SecSql();
@@ -27,7 +22,7 @@ public class ArticleDao {
 		sql.append(", title = ?", title);
 		sql.append(", `body` = ?", body);
 
-		int id = DBUtil.insert(conn, sql); // DB에 새로 생성된 데이터의 id를 조회해 가져옴
+		int id = DBUtil.insert(Container.conn, sql); // DB에 새로 생성된 데이터의 id를 조회해 가져옴
 
 		return id;
 	}
@@ -39,7 +34,7 @@ public class ArticleDao {
 		sql.append("FROM article");
 		sql.append("WHERE id = ?", id);
 
-		return DBUtil.selectRowBooleanValue(conn, sql);
+		return DBUtil.selectRowBooleanValue(Container.conn, sql);
 		// 입력된 id의 게시물이 있다면 'SELECT COUNT(*) > 0' 식이 참이므로 1(true), 없다면 0(false)
 	}
 
@@ -52,7 +47,7 @@ public class ArticleDao {
 		sql.append(", `body` = ?", body);
 		sql.append("WHERE id = ?", id);
 
-		DBUtil.update(conn, sql);
+		DBUtil.update(Container.conn, sql);
 	}
 
 	public List<Article> getArticles() {
@@ -62,7 +57,7 @@ public class ArticleDao {
 		sql.append("FROM article");
 		sql.append("ORDER BY id DESC");
 
-		List<Map<String, Object>> articlesListMap = DBUtil.selectRows(conn, sql);
+		List<Map<String, Object>> articlesListMap = DBUtil.selectRows(Container.conn, sql);
 		// DB에서 조회해 불러온 데이터의 구조를 자바에서는 배열로 바로 인식할 수 없음 => 우선 맵(key,value) 리스트로 불러오기
 
 		List<Article> articles = new ArrayList<>();
@@ -81,7 +76,7 @@ public class ArticleDao {
 		sql.append("SELECT *");
 		sql.append("FROM article");
 		sql.append("WHERE id = ?", id);
-		Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+		Map<String, Object> articleMap = DBUtil.selectRow(Container.conn, sql);
 
 		if (articleMap.isEmpty()) {
 			return null;
@@ -96,7 +91,7 @@ public class ArticleDao {
 		sql.append("DELETE FROM article");
 		sql.append("WHERE id = ?", id);
 
-		DBUtil.delete(conn, sql);
+		DBUtil.delete(Container.conn, sql);
 	}
 
 }

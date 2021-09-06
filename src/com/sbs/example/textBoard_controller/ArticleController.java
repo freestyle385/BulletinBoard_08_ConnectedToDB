@@ -1,21 +1,17 @@
 package com.sbs.example.textBoard_controller;
 
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
-import com.sbs.example.textBoard.Article;
+import com.sbs.example.textBoard.Container;
+import com.sbs.example.textBoard_dto.Article;
 import com.sbs.example.textBoard_service.ArticleService;
 
 public class ArticleController extends Controller {
 
 	private ArticleService articleService;
 
-	public ArticleController(Connection conn, Scanner sc) {
-		super(sc);
-		articleService = new ArticleService(conn);
+	public ArticleController() {
+		articleService = Container.articleService;
 	}
 
 	public void doWrite(String command) {
