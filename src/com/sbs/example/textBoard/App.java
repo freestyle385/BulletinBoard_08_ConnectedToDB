@@ -79,6 +79,9 @@ public class App {
 		} else if (command.equals("member login")) {
 			memberController.doLogin(command);
 
+		} else if (command.equals("member logout")) {
+			memberController.doLogout(command);
+
 		} else if (command.equals("article write")) {
 			articleController.doWrite(command);
 			

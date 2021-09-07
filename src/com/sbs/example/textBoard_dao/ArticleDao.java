@@ -12,13 +12,14 @@ import com.sbs.example.textBoard_dto.Article;
 public class ArticleDao {
 
 		
-	public int write(String title, String body) {
+	public int write(int memberId, String title, String body) {
 
 		SecSql sql = new SecSql();
 
 		sql.append("INSERT INTO article");
 		sql.append("SET regDate = NOW()");
 		sql.append(", updateDate = NOW()");
+		sql.append(", memberId = ?", memberId);
 		sql.append(", title = ?", title);
 		sql.append(", `body` = ?", body);
 
@@ -53,9 +54,11 @@ public class ArticleDao {
 	public List<Article> getArticles() {
 		SecSql sql = new SecSql();
 
-		sql.append("SELECT *");
-		sql.append("FROM article");
-		sql.append("ORDER BY id DESC");
+		sql.append("SELECT A.*, M.name AS extra_writer");
+		sql.append("FROM article AS A");
+		sql.append("INNER JOIN `member` AS M");
+		sql.append("ON A.memberId = M.id");
+		sql.append("ORDER BY A.id DESC");
 
 		List<Map<String, Object>> articlesListMap = DBUtil.selectRows(Container.conn, sql);
 		// DB에서 조회해 불러온 데이터의 구조를 자바에서는 배열로 바로 인식할 수 없음 => 우선 맵(key,value) 리스트로 불러오기

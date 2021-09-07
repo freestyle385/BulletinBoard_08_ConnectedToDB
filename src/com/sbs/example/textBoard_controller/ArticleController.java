@@ -15,18 +15,31 @@ public class ArticleController extends Controller {
 	}
 
 	public void doWrite(String command) {
+		
+		if (Container.session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요.");
+			return;
+		}
+		
 		System.out.println("---게시글 생성---");
 		System.out.print("제목 : ");
 		String title = sc.nextLine();
 		System.out.print("내용 : ");
 		String body = sc.nextLine();
+		int memberId = Container.session.loginedMemberId;
 
-		int id = articleService.write(title, body);
+		int id = articleService.write(memberId, title, body);
 
 		System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
 	}
 
 	public void doModify(String command) {
+		
+		if (Container.session.isLogined() == false) {
+			System.out.println("로그인 후 이용해 주세요.");
+			return;
+		}
+		
 		int id = Integer.parseInt(command.split(" ")[2]);
 		System.out.printf("---%d번 게시글 수정---\n", id);
 
@@ -56,10 +69,10 @@ public class ArticleController extends Controller {
 			return;
 		}
 
-		System.out.println("번호  /  제목");
+		System.out.println("번호 / 		작성날짜 		/	작성자	/   제목");
 
 		for (Article article : articles) {
-			System.out.printf("%d    /   %s\n", article.id, article.title);
+			System.out.printf("%d   /   %s   /		%s   	/   %s\n", article.id, article.regDate, article.extra_writer, article.title);
 		}
 	}
 
@@ -82,6 +95,12 @@ public class ArticleController extends Controller {
 	}
 
 	public void doDelete(String command) {
+		
+		if (Container.session.isLogined() == false) {
+			System.out.println("로그인 후 이용해 주세요.");
+			return;
+		}
+		
 		int id = Integer.parseInt(command.split(" ")[2]);
 		System.out.printf("---%d번 게시글 삭제---\n", id);
 
