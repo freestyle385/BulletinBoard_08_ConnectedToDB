@@ -15,12 +15,12 @@ public class ArticleController extends Controller {
 	}
 
 	public void doWrite(String command) {
-		
+
 		if (Container.session.isLogined() == false) {
 			System.out.println("로그인 후 이용해주세요.");
 			return;
 		}
-		
+
 		System.out.println("---게시글 생성---");
 		System.out.print("제목 : ");
 		String title = sc.nextLine();
@@ -34,12 +34,12 @@ public class ArticleController extends Controller {
 	}
 
 	public void doModify(String command) {
-		
+
 		if (Container.session.isLogined() == false) {
 			System.out.println("로그인 후 이용해 주세요.");
 			return;
 		}
-		
+
 		int id = Integer.parseInt(command.split(" ")[2]);
 		System.out.printf("---%d번 게시글 수정---\n", id);
 
@@ -72,7 +72,8 @@ public class ArticleController extends Controller {
 		System.out.println("번호 / 		작성날짜 		/	작성자	/   제목");
 
 		for (Article article : articles) {
-			System.out.printf("%d   /   %s   /		%s   	/   %s\n", article.id, article.regDate, article.extra_writer, article.title);
+			System.out.printf("%d   /   %s   /		%s   	/   %s\n", article.id, article.regDate,
+					article.extra_writer, article.title);
 		}
 	}
 
@@ -80,6 +81,7 @@ public class ArticleController extends Controller {
 		int id = Integer.parseInt(command.split(" ")[2]);
 		System.out.printf("---%d번 게시글 상세정보---\n", id);
 
+		articleService.increaseHit(id);
 		Article foundArticle = articleService.getArticleById(id);
 
 		if (foundArticle == null) {
@@ -90,17 +92,20 @@ public class ArticleController extends Controller {
 		System.out.printf("번호 : %d\n", foundArticle.id);
 		System.out.printf("생성일 : %s\n", foundArticle.regDate);
 		System.out.printf("수정일 : %s\n", foundArticle.updateDate);
+		System.out.printf("작성자 : %s\n", foundArticle.extra_writer);
 		System.out.printf("제목 : %s\n", foundArticle.title);
 		System.out.printf("내용 : %s\n", foundArticle.body);
+		System.out.printf("조회수 : %d\n", foundArticle.hit);
+
 	}
 
 	public void doDelete(String command) {
-		
+
 		if (Container.session.isLogined() == false) {
 			System.out.println("로그인 후 이용해 주세요.");
 			return;
 		}
-		
+
 		int id = Integer.parseInt(command.split(" ")[2]);
 		System.out.printf("---%d번 게시글 삭제---\n", id);
 

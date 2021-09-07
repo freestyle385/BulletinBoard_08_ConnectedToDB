@@ -10,9 +10,10 @@ public class Article {
 	public int memberId;
 	public String title;
 	public String body;
-	
+	public int hit;
+
 	public String extra_writer;
-	
+
 	public Article(Map<String, Object> articleMap) {
 		this.id = (int) articleMap.get("id");
 		this.regDate = (LocalDateTime) articleMap.get("regDate");
@@ -20,8 +21,9 @@ public class Article {
 		this.memberId = (int) articleMap.get("memberId");
 		this.title = (String) articleMap.get("title");
 		this.body = (String) articleMap.get("body");
-		
-		if(articleMap.get("extra_writer") != null) {
+		this.hit = (int) articleMap.get("hit");
+
+		if (articleMap.get("extra_writer") != null) {
 			this.extra_writer = (String) articleMap.get("extra_writer");
 		}
 	}
@@ -29,6 +31,6 @@ public class Article {
 	@Override
 	public String toString() {
 		return "Article [id=" + id + ", regDate=" + regDate + ", updateDate=" + updateDate + ", memberId=" + memberId
-				+ ", title=" + title + ", body=" + body + "]";
+				+ ", title=" + title + ", body=" + body + ", hit=" + hit + ", extra_writer=" + extra_writer + "]";
 	}
 }

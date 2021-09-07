@@ -38,4 +38,8 @@ public class ArticleService {
 		articleDao.delete(id);
 	}
 
+	public void increaseHit(int id) {
+		articleDao.increaseHit(id);
+	}
+
 }
